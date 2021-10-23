@@ -1,6 +1,8 @@
 import React from 'react'
 
 import Logo from './assets/Logo.svg';
+import Unchecked from './assets/Unchecked.svg';
+import Checked from './assets/Checked.svg';
 
 import './App.css';
 
@@ -21,10 +23,102 @@ function flightDuration(duration) {
 }
 
 function getStopsTitle(stops) {
-	if (stops.length == 0) return '0 пересадок'
-	if (stops.length == 1) return '1 пересадка'
+	if (stops.length === 0) return 'без пересадок'
+	if (stops.length === 1) return '1 пересадка'
 	if (stops.length >= 2 && stops.length <= 4) return stops.length + ' пересадки'
 	return stops.length + ' пересадок'
+}
+
+function Tickets(props) {
+	console.log(props);
+	let tickets = props.tickets
+	let sortBy = props.sortBy
+	let filter = props.filter
+
+	let filtered_tickets = []
+
+	if (filter.indexOf('all') === -1) {
+		filter.forEach(elem => {
+			if (parseInt(elem) === 0) {
+				for (let i = 0; i < tickets.length; i++) {
+					if (tickets[i].segments[0].stops.length + tickets[i].segments[1].stops.length === 0) {
+						filtered_tickets.push(tickets[i])
+					}
+				}
+			} else {
+				for (let i = 0; i < tickets.length; i++) {
+					if (tickets[i].segments[0].stops.length <= parseInt(elem) &&
+						tickets[i].segments[1].stops.length <= parseInt(elem) &&
+						(tickets[i].segments[0].stops.length == parseInt(elem) ||
+						tickets[i].segments[1].stops.length == parseInt(elem))) {
+						filtered_tickets.push(tickets[i])
+					}
+				}
+			}
+		});
+	}
+
+	if (filtered_tickets.length !== 0) {
+		tickets = [...new Set(filtered_tickets)]
+	}
+
+	if (sortBy === 'price') {
+		tickets = tickets.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+	}
+	if (sortBy === 'time') {
+		tickets = tickets.sort((a, b) => (a.segments[0].duration + a.segments[1].duration) - (b.segments[0].duration + b.segments[1].duration));
+	}
+
+	return (
+		<div className="App-content-tickets">
+			{tickets.slice(0, 5).map(ticket => Ticket(ticket))}
+		</div>
+	)
+}
+
+function Ticket(ticket) {
+	return (
+		<div className="App-ticket">
+			<div className="App-ticket-header">
+				<p className="App-ticket-price">{ticket.price} Р</p>
+				<img className="App-ticket-carrier-logo" src={'http://pics.avs.io/99/36/' + ticket.carrier + '.png'}></img>
+			</div>
+			<div className="App-ticket-content">
+				<table className="App-ticket-table">
+					<tbody>
+						<tr>
+							<td>
+								<p className="App-ticket-table-gray">{ticket.segments[0].origin} - {ticket.segments[0].destination}</p>
+								<p className="App-ticket-table-black">{flightDate(ticket.segments[0].date, ticket.segments[0].duration)}</p>
+							</td>
+							<td>
+								<p className="App-ticket-table-gray">В пути</p>
+								<p className="App-ticket-table-black">{flightDuration(ticket.segments[0].duration)}</p>
+							</td>
+							<td>
+								<p className="App-ticket-table-gray">{getStopsTitle(ticket.segments[0].stops)}</p>
+								<p className="App-ticket-table-black">{ticket.segments[0].stops.join(', ')}</p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p className="App-ticket-table-gray">{ticket.segments[1].origin} - {ticket.segments[1].destination}</p>
+								<p className="App-ticket-table-black">{flightDate(ticket.segments[1].date, ticket.segments[1].duration)}</p>
+							</td>
+							<td>
+								<p className="App-ticket-table-gray">В пути</p>
+								<p className="App-ticket-table-black">{flightDuration(ticket.segments[1].duration)}</p>
+							</td>
+							<td>
+								<p className="App-ticket-table-gray">{getStopsTitle(ticket.segments[1].stops)}</p>
+								<p className="App-ticket-table-black">{ticket.segments[1].stops.join(', ')}</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	)
 }
 
 class App extends React.Component {
@@ -34,6 +128,8 @@ class App extends React.Component {
 			tickets: [],
 			searchID: '',
 			stopSearch: false,
+			sortBy: 'price',
+			filter: ['3'],
 			isLoading: true,
 		};
 	}
@@ -76,6 +172,25 @@ class App extends React.Component {
 		this.getPackOfTickets()
 	}
 
+	toggleFilter(f) {
+		let filter = this.state.filter
+		if (filter.indexOf(f) === -1) {
+			if (f === 'all') {
+				filter = ['all', '0', '1', '2', '3']
+			} else {
+				filter.push(f)
+			}
+		} else {
+			if (f !== 'all' && filter.indexOf('all') !== -1) {
+				let index = filter.indexOf('all')
+				filter.splice(index, 1)
+			}
+			let index = filter.indexOf(f)
+			filter.splice(index, 1)
+		}
+		this.setState({filter: filter})
+	}
+
 	render() {
 		if (this.state.isLoading) {
 			return (<div></div>)
@@ -85,54 +200,36 @@ class App extends React.Component {
 				<img className="App-logo" src={Logo}></img>
 				<div className="App-content">
 					<div className="App-content-left">
-						
+						<div className="App-content-left-filters">
+							<p className="App-content-left-filters-title">Количество пересадок</p>
+							<div className="App-content-left-filter" onClick={() => this.toggleFilter('all')}>
+								{this.state.filter.indexOf('all') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								<p>Все</p>
+							</div>
+							<div className="App-content-left-filter" onClick={() => this.toggleFilter('0')}>
+								{this.state.filter.indexOf('0') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								<p>Без пересадок</p>
+							</div>
+							<div className="App-content-left-filter" onClick={() => this.toggleFilter('1')}>
+								{this.state.filter.indexOf('1') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								<p>1 пересадка</p>
+							</div>
+							<div className="App-content-left-filter" onClick={() => this.toggleFilter('2')}>
+								{this.state.filter.indexOf('2') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								<p>2 пересадки</p>
+							</div>
+							<div className="App-content-left-filter" onClick={() => this.toggleFilter('3')}>
+								{this.state.filter.indexOf('3') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								<p>3 пересадки</p>
+							</div>
+						</div>
 					</div>
 					<div className="App-content-right">
 						<div className="App-content-tabs">
-						
+							<div onClick={() => {this.setState({sortBy: 'price'})}} className={this.state.sortBy === 'price' ? 'App-content-tab-active App-content-tab App-content-tab-left' : 'App-content-tab App-content-tab-left'}><p>Самый дешевый</p></div>
+							<div onClick={() => {this.setState({sortBy: 'time'})}} className={this.state.sortBy === 'time' ? 'App-content-tab-active App-content-tab App-content-tab-right' : 'App-content-tab App-content-tab-right'}><p>Самый быстрый</p></div>
 						</div>
-						<div className="App-content-tickets">
-							{this.state.tickets.map((ticket => {
-								return (
-									<div className="App-ticket">
-										<div className="App-ticket-header">
-											<p className="App-ticket-price">{ticket.price} Р</p>
-											<img className="App-ticket-carrier-logo" src={'http://pics.avs.io/99/36/' + ticket.carrier + '.png'}></img>
-										</div>
-										<div className="App-ticket-content">
-											<table className="App-ticket-table">
-												<tbody>
-													<tr>
-														<td>
-															<p className="App-ticket-table-gray">{ticket.segments[0].origin} - {ticket.segments[0].destination}</p>
-															<p className="App-ticket-table-black">{flightDate(ticket.segments[0].date, ticket.segments[0].duration)}</p>
-														</td>
-														<td>
-															<p className="App-ticket-table-gray">В пути</p>
-															<p className="App-ticket-table-black">{flightDuration(ticket.segments[0].duration)}</p>
-														</td>
-														<td>
-															<p className="App-ticket-table-gray">{getStopsTitle(ticket.segments[0].stops)}</p>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<p className="App-ticket-table-gray">{ticket.segments[1].origin} - {ticket.segments[1].destination}</p>
-															<p className="App-ticket-table-black">{flightDate(ticket.segments[1].date, ticket.segments[1].duration)}</p>
-														</td>
-														<td>
-															<p className="App-ticket-table-gray">В пути</p>
-															<p className="App-ticket-table-black">{flightDuration(ticket.segments[1].duration)}</p>
-														</td>
-														<td></td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								)
-							}))}
-						</div>
+						<Tickets tickets={this.state.tickets} sortBy={this.state.sortBy} filter={this.state.filter} />
 					</div>
 				</div>
 			</div>
