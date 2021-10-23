@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Logo from './assets/Logo.svg';
+import Logo from './assets/Logo.png';
 import Unchecked from './assets/Unchecked.svg';
 import Checked from './assets/Checked.svg';
 
@@ -129,7 +129,7 @@ class App extends React.Component {
 			searchID: '',
 			stopSearch: false,
 			sortBy: 'price',
-			filter: ['3'],
+			filter: ['all', '0', '1', '2', '3'],
 			isLoading: true,
 		};
 	}
