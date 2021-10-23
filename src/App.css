@@ -77,6 +77,36 @@ body {
 	color: #2196F3;
 }
 
-.App-ticket-carrier-logo {
+.App-ticket-table {
+	width: 462px;
+	height: 88px;
+	display: block;
+	margin: 0 auto;
+	margin-top: 20px;
+}
 
+.App-ticket-table > tbody> tr > td {
+	width: 141px;
+	height: 39px;
+	padding-bottom: 10px;
+}
+
+.App-ticket-table-gray {
+	font-family: Open Sans;
+	font-style: normal;
+	font-weight: 600;
+	font-size: 12px;
+	line-height: 18px;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	color: #A0B0B9;	
+}
+
+.App-ticket-table-black {
+	font-family: Open Sans;
+	font-style: normal;
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 21px;
+	color: #4A4A4A;	
 }
