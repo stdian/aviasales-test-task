@@ -49,8 +49,8 @@ function Tickets(props) {
 				for (let i = 0; i < tickets.length; i++) {
 					if (tickets[i].segments[0].stops.length <= parseInt(elem) &&
 						tickets[i].segments[1].stops.length <= parseInt(elem) &&
-						(tickets[i].segments[0].stops.length == parseInt(elem) ||
-						tickets[i].segments[1].stops.length == parseInt(elem))) {
+						(tickets[i].segments[0].stops.length === parseInt(elem) ||
+						tickets[i].segments[1].stops.length === parseInt(elem))) {
 						filtered_tickets.push(tickets[i])
 					}
 				}
@@ -81,7 +81,7 @@ function Ticket(ticket) {
 		<div className="App-ticket">
 			<div className="App-ticket-header">
 				<p className="App-ticket-price">{ticket.price} Р</p>
-				<img className="App-ticket-carrier-logo" src={'http://pics.avs.io/99/36/' + ticket.carrier + '.png'}></img>
+				<img className="App-ticket-carrier-logo" src={'http://pics.avs.io/99/36/' + ticket.carrier + '.png'} alt={'err'}></img>
 			</div>
 			<div className="App-ticket-content">
 				<table className="App-ticket-table">
@@ -197,29 +197,29 @@ class App extends React.Component {
 		}
 		return (
 			<div className="App">
-				<img className="App-logo" src={Logo}></img>
+				<img className="App-logo" src={Logo} alt={'logo'}></img>
 				<div className="App-content">
 					<div className="App-content-left">
 						<div className="App-content-left-filters">
 							<p className="App-content-left-filters-title">Количество пересадок</p>
 							<div className="App-content-left-filter" onClick={() => this.toggleFilter('all')}>
-								{this.state.filter.indexOf('all') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								{this.state.filter.indexOf('all') === -1 ? <img src={Unchecked} alt={'err'}></img> : <img src={Checked} alt={'err'}></img>}
 								<p>Все</p>
 							</div>
 							<div className="App-content-left-filter" onClick={() => this.toggleFilter('0')}>
-								{this.state.filter.indexOf('0') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								{this.state.filter.indexOf('0') === -1 ? <img src={Unchecked} alt={'err'}></img> : <img src={Checked} alt={'err'}></img>}
 								<p>Без пересадок</p>
 							</div>
 							<div className="App-content-left-filter" onClick={() => this.toggleFilter('1')}>
-								{this.state.filter.indexOf('1') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								{this.state.filter.indexOf('1') === -1 ? <img src={Unchecked} alt={'err'}></img> : <img src={Checked} alt={'err'}></img>}
 								<p>1 пересадка</p>
 							</div>
 							<div className="App-content-left-filter" onClick={() => this.toggleFilter('2')}>
-								{this.state.filter.indexOf('2') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								{this.state.filter.indexOf('2') === -1 ? <img src={Unchecked} alt={'err'}></img> : <img src={Checked} alt={'err'}></img>}
 								<p>2 пересадки</p>
 							</div>
 							<div className="App-content-left-filter" onClick={() => this.toggleFilter('3')}>
-								{this.state.filter.indexOf('3') === -1 ? <img src={Unchecked}></img> : <img src={Checked}></img>}
+								{this.state.filter.indexOf('3') === -1 ? <img src={Unchecked} alt={'err'}></img> : <img src={Checked} alt={'err'}></img>}
 								<p>3 пересадки</p>
 							</div>
 						</div>
