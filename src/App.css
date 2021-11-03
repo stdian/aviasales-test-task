@@ -8,6 +8,9 @@ body {
 	background-color: #F3F7FA;
 }
 
+.Loading {
+	opacity: 0;
+}
 
 .App-logo {
 	display: block;

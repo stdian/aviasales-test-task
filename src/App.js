@@ -193,7 +193,7 @@ class App extends React.Component {
 
 	render() {
 		if (this.state.isLoading) {
-			return (<div></div>)
+			return (<div className="Loading">Loading</div>)
 		}
 		return (
 			<div className="App">
